@@ -45,7 +45,7 @@ public class App {
     }
 
     private void lookupContact(int count) {
-        String email = String.format("email-%d@tld", count);
+        String email = String.format("a1@gmail.com", count);
         long start = System.currentTimeMillis();
         database.getContactNameFromEmail(email);
         long end = System.currentTimeMillis();

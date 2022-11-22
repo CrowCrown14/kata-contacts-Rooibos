@@ -23,7 +23,7 @@ public class Database {
             Statement statement = connection.createStatement();
             statement.execute("""
                     CREATE TABLE contacts(
-                    id INTEGER PRIMARY KEY,
+                    id INTEGER PRIMARY KEY AUTO_INCREMENT,
                     name TEXT NOT NULL,
                     email TEXT NOT NULL
                     )
@@ -36,11 +36,39 @@ public class Database {
     }
 
     public void insertContacts(Stream<Contact> contacts) {
-        // TODO
+    	
+    	try {
+			connection.setAutoCommit(false);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    	
+    		contacts.forEach(contact -> {
+    			try {
+	    			String query = "INSERT INTO contacts(name,email) VALUES (?,?)";
+	    			PreparedStatement statement = connection.prepareStatement(query);
+	    			
+//	    			statement.setInt(1, count);
+//	    			this.count++;
+	    			statement.setString(1, contact.name());
+	    			statement.setString(2, contact.email());
+	                
+	    			statement.executeUpdate();
+	    			
+    			} catch (SQLException e) {
+    				throw new RuntimeException("Error when looking up contacts from db: " + e.toString());
+		    }
+    	
+    		try {
+				connection.setAutoCommit(true);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+    		});
     }
 
     public String getContactNameFromEmail(String email) {
-        String query = "SELECT name FROM contacts WHERE email = ?";
+        String query = "SELECT name FROM contacts WHERE email=?";
         try {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, email);
